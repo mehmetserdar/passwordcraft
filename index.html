@@ -9,6 +9,10 @@
 	<link rel="shortcut icon" href="favicon.png" type="image/x-icon">
 	<title>Strong Password Generator & Random Quotes</title>
 	<style type="text/css">
+		a, a:hover, a:visited, a:active{
+			text-decoration: none;
+
+		}
 		#toast-container>div {
 			opacity: 1 !important;
 		}
@@ -108,7 +112,7 @@
 	</script>
 </head>
 
-<body>
+<body class="d-flex flex-column h-100 w-100">
 
 	<div class="container position-relative">
 		<div class="row m-5">
@@ -168,13 +172,15 @@
 
 						<i id="toastbtn" class="fa fa-clipboard btn btn-primary" aria-hidden="true"
 							onclick="selectAndCopy(); toastShow(); return false;"></i>
-
-
+						
+							
 					</div>
 				</div>
 			</form>
 		</div>
 	</div>
+
+	
 	<!-- Toast -->
 	<div class="content">
 		<div class="row">
@@ -182,9 +188,9 @@
 
 				<div class="toast align-items-center text-white bg-success border-0 fs-6" role="alert"
 					aria-live="assertive" aria-atomic="true">
-					<div class="d-flex">
-						<div class="toast-body text-center">
-							PASSWORD IS COPIED!
+					<div class="d-flex justify-content-center">
+						<div class="toast-body">
+							COPIED!
 						</div>
 					</div>
 				</div>
@@ -258,5 +264,20 @@
 			getNewQuote();
 		}
 	</script>
+	<footer class="footer mt-auto py-3 bg-light">
+		<div class="container">
+		  <span class="d-flex justify-content-center w-100 text-muted text-center"><small>
+			<b>Features:</b> 
+			Passwords are generated client-sided (in your web browser). They don't travel around www, so they are for you only!
+			Passwords are securely generated randomly. <br>
+			<b>Disclaimer:</b>
+			This tool does not guarantee the security of your password. How you remember and save your password is entirely your responsibility. <br>
+		2021 &copy;  <a href="https://github.com/mehmetserdar/strongpasswordquotes-main" target="_blank">mehmetserdar on github</a>
+		</small>
+		</span>
+		</div>
+	  </footer>
+	  
+	
 </body>
 </html>
