@@ -34,9 +34,10 @@
 		}
 
 		body {
-			background-image: url("bg.jpg");
-			background-repeat: no-repeat;
-			background-size: cover;
+			background-color: #4cb5f2;
+            background-image: linear-gradient(180deg, #4cb5f2 0%, #ffffff 100%);
+
+
 		}
 	</style>
 	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
@@ -231,7 +232,6 @@
 		function quotes() {
 			const text = document.getElementById("quote");
 			const author = document.getElementById("author");
-			const tweetButton = document.getElementById("tweet");
 
 			const getNewQuote = async () => {
 				//api for quotes
