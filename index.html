@@ -1,360 +1,334 @@
 <html>
+  <head>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+    />
+    <title>Strong Password Generator & Random Quotes</title>
+    <style type="text/css">
+      #toast-container > div {
+        opacity: 1 !important;
+      }
 
-<head>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
-	<link rel="shortcut icon" href="favicon.png" type="image/x-icon">
-	<title>Strong Password Generator & Random Quotes</title>
-	<style type="text/css">
-		a,
-		a:hover,
-		a:visited,
-		a:active {
-			text-decoration: none;
+      .toast-message {
+        font-family: sans-serif;
+      }
 
-		}
+      span#display-password {
+        font-family: monospace;
+      }
 
-		#toast-container>div {
-			opacity: 1 !important;
-		}
+      p.disclaimer {
+        font-family: sans-serif;
+      }
 
-		.toast-message {
-			font-family: sans-serif;
-		}
+      input[type="text"] {
+        max-width: 70vw;
+      }
 
-		span#display-password {
-			font-family: monospace;
-		}
-
-		p.disclaimer {
-			font-family: sans-serif;
-		}
-
-		input[type=text] {
-			max-width: 70vw
-		}
-
-		body {
-			background-color: #4cb5f2;
-			background-image: linear-gradient(180deg, #4cb5f2 0%, #ffffff 100%);
-
-
-		}
-	</style>
-	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-	<script src="cookie.js"></script>
-	<script>
-		function quotes() {
-			const text = document.getElementById("quote");
-			const author = document.getElementById("author");
-
-			const getNewQuote = async () => {
-				//api for quotes
-				var url = "https://type.fit/api/quotes";
-
-				// fetch the data from api
-				const response = await fetch(url);
-				console.log(typeof response);
-				//convert response to json and store it in quotes array
-				const allQuotes = await response.json();
-
-				// Generates a random number between 0 and the length of the quotes array
-				const indx = Math.floor(Math.random() * allQuotes.length);
-
-				//Store the quote present at the randomly generated index
-				const quote = allQuotes[indx].text;
-
-				//Store the author of the respective quote
-				const auth = allQuotes[indx].author;
-
-				if (auth == null) {
-					author = "Anonymous";
-				}
-
-				//function to dynamically display the quote and the author
-				text.innerHTML = quote;
-				author.innerHTML = auth;
-			}
-
-			getNewQuote();
-			
-		}
-	</script>
-	<script type="text/javascript">
-		var charTypes = {
-			'upper': 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-			'lower': 'abcdefghijklmnopqrstuvwxyz',
-			'number': '0123456789',
-			'special': '!$%^&*()-=+[]{};#:@~,./<>?'
-		};
-		window.onload = function () {
-			var inputs = document.querySelectorAll('form div input[type=text]');
-			for (var i = 0; i < inputs.length; i++) {
-				var input = inputs[i];
-				var div = input.parentNode;
-				//set initial value
-				var type = div.id;
-				input.value = charTypes[type];
-				input.size = 40;
-				//hook up reset handler
-				var anchor = div.querySelector('a');
-				anchor.onclick = function (input, type) {
-					return function () {
-						input.value = charTypes[type];
-						return false;
-					};
-				}(input, type);
-			}
-			generatePassword(); return false;
-		}
-		function _generatePassword(passwordLength, charBlocks) {
-			var allChars = "";
-			for (var i = 0; i < charBlocks.length; i++) {
-				allChars += charBlocks[i];
-			}
-			var numChars = allChars.length;
-			var password = "";
-			for (var i = 1; i <= passwordLength; i++) {
-				password += allChars.charAt(Math.floor(Math.random() * numChars));
-			}
-			return password;
-		}
-		function generatePassword(passwordLength) {
-			var charBlocks = [];
-			for (id in charTypes) {
-				var isTicked = document.querySelector('div#' + id + ' input[type=checkbox]').checked;
-				var value = document.querySelector('div#' + id + ' input[type=text]').value;
-				if (isTicked) {
-					charBlocks.push(value);
-				}
-			}
-			var $length = document.getElementById('length');
-			var passwordLength = parseInt($length.value)
-
-			var password = _generatePassword(passwordLength, charBlocks);
-			var $display = document.getElementById('display-password');
-			$display.textContent = password;
-			quotes();
-		}
-	</script>
-	<script>
-		function toast() {
-			var toastTrigger = document.getElementById('liveToastBtn')
-			var toastLiveExample = document.getElementById('liveToast')
-			if (toastTrigger) {
-				toastTrigger.addEventListener('click', function () {
-					var toast = new bootstrap.Toast(toastLiveExample)
-
-					toast.show()
-				})
-			}
-		}
-	</script>
-</head>
-	<!-- Toast -->
-	
-<body class="d-flex flex-column h-100 w-100">
-
-	<div class="container position-relative">
-		<div class="row m-5">
-
-			<p class="h1 text-white text-center mb-2">Strong Password Generator</p>
-			<p class="h3 text-white text-center mb-5">with Random Quotes</p>
-			<form>
-				<div class="input-group mb-3" id="upper">
-					<div class="input-group-text">
-						<input class="form-check-input mt-0" data-box-id="cb1" type="checkbox" >
-					</div>
-					<input type="text" class="form-control">
-					<span> <a class="btn btn-primary p-2" href="#">Reset</a></span>
-				</div>
-				<div class="input-group mb-3" id="lower">
-					<div class="input-group-text">
-						<input class="form-check-input mt-0"  data-box-id="cb2" type="checkbox" >
-					</div>
-					<input type="text" class="form-control">
-					<span> <a class="btn btn-primary p-2" href="#">Reset</a></span>
-				</div>
-				<div class="input-group mb-3" id="number">
-					<div class="input-group-text">
-						<input class="form-check-input mt-0"  data-box-id="cb3" type="checkbox" >
-					</div>
-					<input type="text" class="form-control">
-					<span> <a class="btn btn-primary p-2" href="#">Reset</a></span>
-				</div>
-				<div class="input-group mb-3" id="special">
-					<div class="input-group-text">
-						<input class="form-check-input mt-0"  data-box-id="cb4" type="checkbox" >
-					</div>
-					<input type="text" class="form-control">
-					<span> <a class="btn btn-primary p-2" href="#">Reset</a></span>
-				</div>
-
-			
-				<br />
-				<div class="input-group flex-nowrap">
-					<span class="input-group-text" id="addon-wrapping">Length:</span>
-					<input id="length" type="number" class="form-control" placeholder="Length:" value="16"><br />
-					<input class="btn btn-primary p-2" type="submit" value="Generate"
-						onclick="generatePassword()">
-				</div>
-				
-
-				<figure class="text-center mt-5 bg-white rounded">
-					<blockquote class="blockquote" id="quote">
-						<p></p>
-					</blockquote>
-					<figcaption class="blockquote-footer" id="author">
-					</figcaption>
-				</figure>
-
-				<div class="input-group d-flex justify-content-center mt-5">
-					<div class="input-group-text">
-						<span id="display-password" class="form-control-lg"></span>
-							
-						<i id="toastbtn" class="fa fa-clipboard btn btn-primary" aria-hidden="true"
-							onclick="selectAndCopy()"></i>
-
-							
-
-
-					</div>
-					
-				</div>
-			</form>
-			<div class="content">
-				<div class="row">
-					<div class="d-flex justify-content-center align-items-center w-20">
-		
-						<div class="toast align-items-center text-white bg-success border-0 fs-6" role="alert"
-							>
-							<div class="d-flex justify-content-center">
-								<div class="toast-body">
-									COPIED!
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-
-
-
-	<script type="text/javascript">
-
-		$(buttonSelector).click(selectAndCopy)
-
-		function selectAndCopy() {
-			var span = document.getElementById('display-password')
-			var range = document.createRange();
-			range.setStartBefore(span.firstChild);
-			range.setEndAfter(span.lastChild);
-			var sel = window.getSelection();
-			sel.removeAllRanges();
-			sel.addRange(range);
-			document.execCommand("copy");
-		}
-	</script>
-	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js"></script>
-	<script>
-		function toastShow() {
-			document.getElementById("toastbtn").onclick = function () {
-				var toastElList = [].slice.call(document.querySelectorAll('.toast'))
-				var toastList = toastElList.map(function (toastEl) {
-					// Creates an array of toasts (it only initializes them)
-					return new bootstrap.Toast(toastEl) // No need for options; use the default options
-				});
-				toastList.forEach(toast => toast.show()); // This show them
-			};
-		}
-		toastShow();
-	</script>
-	<script>
-		function quotes() {
-			const text = document.getElementById("quote");
-			const author = document.getElementById("author");
-
-			const getNewQuote = async () => {
-				//api for quotes
-				var url = "https://type.fit/api/quotes";
-
-				// fetch the data from api
-				const response = await fetch(url);
-				console.log(typeof response);
-				//convert response to json and store it in quotes array
-				const allQuotes = await response.json();
-
-				// Generates a random number between 0 and the length of the quotes array
-				const indx = Math.floor(Math.random() * allQuotes.length);
-
-				//Store the quote present at the randomly generated index
-				const quote = allQuotes[indx].text;
-
-				//Store the author of the respective quote
-				const auth = allQuotes[indx].author;
-
-				if (auth == null) {
-					author = "Anonymous";
-				}
-
-				//function to dynamically display the quote and the author
-				text.innerHTML = quote;
-				author.innerHTML = auth;
-			}
-
-			getNewQuote();
-			
-		}
-	</script>
-	
-<script>
-$('.form-check-input').change(function(){
-    var chckd = this.checked ? 'true' : 'false';
-    var index = $(this).data('box-id');
-    localStorage.setItem(index, chckd);
-});
-
-</script>
-<script>
-$(function() {
-    $('.form-check-input').each(function(){
-        var index = $(this).data('box-id');
-        if (localStorage.getItem(index) == 'true') {
-            $(this).prop('checked', true);
-        } else {
-            $(this).prop('checked', false);
+      body {
+        background-color: #4cb5f2;
+        background-image: linear-gradient(180deg, #4cb5f2 0%, #ffffff 100%);
+      }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript">
+      var charTypes = {
+        upper: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        lower: "abcdefghijklmnopqrstuvwxyz",
+        number: "0123456789",
+        special: "!$%^&*()-=+[]{};#:@~,./<>?",
+      };
+      window.onload = function () {
+        var inputs = document.querySelectorAll("form div input[type=text]");
+        for (var i = 0; i < inputs.length; i++) {
+          var input = inputs[i];
+          var div = input.parentNode;
+          //set initial value
+          var type = div.id;
+          input.value = charTypes[type];
+          input.size = 40;
+          //hook up reset handler
+          var anchor = div.querySelector("a");
+          anchor.onclick = (function (input, type) {
+            return function () {
+              input.value = charTypes[type];
+              return false;
+            };
+          })(input, type);
         }
-    });    
-});
+        generatePassword();
+        return false;
+      };
+      function _generatePassword(passwordLength, charBlocks) {
+        var allChars = "";
+        for (var i = 0; i < charBlocks.length; i++) {
+          allChars += charBlocks[i];
+        }
+        var numChars = allChars.length;
+        var password = "";
+        for (var i = 1; i <= passwordLength; i++) {
+          password += allChars.charAt(Math.floor(Math.random() * numChars));
+        }
+        return password;
+      }
+      function generatePassword(passwordLength) {
+        var charBlocks = [];
+        for (id in charTypes) {
+          var isTicked = document.querySelector(
+            "div#" + id + " input[type=checkbox]"
+          ).checked;
+          var value = document.querySelector(
+            "div#" + id + " input[type=text]"
+          ).value;
+          if (isTicked) {
+            charBlocks.push(value);
+          }
+        }
+        var $length = document.getElementById("length");
+        var passwordLength = parseInt($length.value);
 
+        var password = _generatePassword(passwordLength, charBlocks);
+        var $display = document.getElementById("display-password");
+        $display.textContent = password;
+        selectAndCopy();
+      }
+    </script>
+    <script>
+      function toast() {
+        var toastTrigger = document.getElementById("liveToastBtn");
+        var toastLiveExample = document.getElementById("liveToast");
+        if (toastTrigger) {
+          toastTrigger.addEventListener("click", function () {
+            var toast = new bootstrap.Toast(toastLiveExample);
 
-</script>
-	
-	<footer class="footer mt-auto py-3 bg-light">
-		<div class="container">
-			<span class="d-flex justify-content-center w-100 text-muted text-center"><small>
-					<b>Features:</b>
-					Passwords are generated client-sided (in your web browser). They don't travel around www, so they
-					are for you only!
-					Passwords are securely generated randomly. <br>
-					<b>Disclaimer:</b>
-					This tool does not guarantee the security of your password. How you remember and save your password
-					is entirely your responsibility. <br>
-					2021 &copy; <a href="https://github.com/mehmetserdar/strongpasswordquotes-main"
-						target="_blank">mehmetserdar on github</a>
-				</small>
-			</span>
-		</div>
-	</footer>
+            toast.show();
+          });
+        }
+      }
+    </script>
+  </head>
 
+  <body>
+    <div class="container position-relative">
+      <div class="row m-5">
+        <p class="h1 text-white text-center mb-2">Strong Password Generator</p>
+        <p class="h3 text-white text-center mb-5">with Random Quotes</p>
+        <form>
+          <div class="input-group mb-3" id="upper">
+            <div class="input-group-text">
+              <input
+                class="form-check-input mt-0"
+                type="checkbox"
+                data-box-id="cb1"
+                checked
+              />
+            </div>
+            <input type="text" class="form-control" />
+            <span> <a class="btn btn-primary p-2" href="#">Reset</a></span>
+          </div>
+          <div class="input-group mb-3" id="lower">
+            <div class="input-group-text">
+              <input
+                class="form-check-input mt-0"
+                type="checkbox"
+                data-box-id="cb2"
+                checked
+              />
+            </div>
+            <input type="text" class="form-control" />
+            <span> <a class="btn btn-primary p-2" href="#">Reset</a></span>
+          </div>
+          <div class="input-group mb-3" id="number">
+            <div class="input-group-text">
+              <input
+                class="form-check-input mt-0"
+                type="checkbox"
+                data-box-id="cb3"
+                checked
+              />
+            </div>
+            <input type="text" class="form-control" />
+            <span> <a class="btn btn-primary p-2" href="#">Reset</a></span>
+          </div>
+          <div class="input-group mb-3" id="special">
+            <div class="input-group-text">
+              <input
+                class="form-check-input mt-0"
+                type="checkbox"
+                data-box-id="cb4"
+                checked
+              />
+            </div>
+            <input type="text" class="form-control" />
+            <span> <a class="btn btn-primary p-2" href="#">Reset</a></span>
+          </div>
+          <br />
+          <div class="input-group flex-nowrap">
+            <span class="input-group-text" id="addon-wrapping">Length:</span>
+            <input
+              id="length"
+              type="number"
+              class="form-control"
+              placeholder="Length:"
+              value="16"
+            /><br />
+            <input
+              class="btn btn-primary p-2"
+              type="submit"
+              value="Generate"
+              onclick="generatePassword(); quotes(); return false;"
+            />
+          </div>
 
-</body>
+          <figure class="text-center mt-5 bg-white rounded">
+            <blockquote class="blockquote" id="quote">
+              <p>
+                Treat your password like your toothbrush. Don't let anybody else
+                use it, and get a new one every six months.
+              </p>
+            </blockquote>
+            <figcaption class="blockquote-footer" id="author">
+              Clifford Stoll
+            </figcaption>
+          </figure>
 
+          <div class="input-group d-flex justify-content-center mt-5">
+            <div class="input-group-text">
+              <span id="display-password" class="form-control-lg"></span>
+
+              <i
+                id="toastbtn"
+                class="fa fa-clipboard btn btn-primary"
+                aria-hidden="true"
+                onclick="selectAndCopy(); toastShow(); return false;"
+              ></i>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- Toast -->
+    <div class="content">
+      <div class="row">
+        <div
+          aria-live="polite"
+          aria-atomic="true"
+          class="d-flex justify-content-center align-items-center w-100"
+        >
+          <div
+            class="toast align-items-center text-white bg-success border-0 fs-6"
+            role="alert"
+            aria-live="assertive"
+            aria-atomic="true"
+          >
+            <div class="d-flex">
+              <div class="toast-body text-center">PASSWORD IS COPIED!</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      $(buttonSelector).click(selectAndCopy);
+
+      function selectAndCopy() {
+        var span = document.getElementById("display-password");
+        var range = document.createRange();
+        range.setStartBefore(span.firstChild);
+        range.setEndAfter(span.lastChild);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        document.execCommand("copy");
+      }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js"></script>
+    <script>
+      function toastShow() {
+        document.getElementById("toastbtn").onclick = function () {
+          var toastElList = [].slice.call(document.querySelectorAll(".toast"));
+          var toastList = toastElList.map(function (toastEl) {
+            // Creates an array of toasts (it only initializes them)
+            return new bootstrap.Toast(toastEl); // No need for options; use the default options
+          });
+          toastList.forEach((toast) => toast.show()); // This show them
+        };
+      }
+    </script>
+    <script>
+      function quotes() {
+        const text = document.getElementById("quote");
+        const author = document.getElementById("author");
+        const tweetButton = document.getElementById("tweet");
+
+        const getNewQuote = async () => {
+          //api for quotes
+          var url = "https://type.fit/api/quotes";
+
+          // fetch the data from api
+          const response = await fetch(url);
+          console.log(typeof response);
+          //convert response to json and store it in quotes array
+          const allQuotes = await response.json();
+
+          // Generates a random number between 0 and the length of the quotes array
+          const indx = Math.floor(Math.random() * allQuotes.length);
+
+          //Store the quote present at the randomly generated index
+          const quote = allQuotes[indx].text;
+
+          //Store the author of the respective quote
+          const auth = allQuotes[indx].author;
+
+          if (auth == null) {
+            author = "Anonymous";
+          }
+
+          //function to dynamically display the quote and the author
+          text.innerHTML = quote;
+          author.innerHTML = auth;
+        };
+
+        getNewQuote();
+      }
+    </script>
+    <script>
+      $(".form-check-input").change(function () {
+        var chckd = this.checked ? "true" : "false";
+        var index = $(this).data("box-id");
+        localStorage.setItem(index, chckd);
+      });
+    </script>
+    <script>
+      $(function () {
+        $(".form-check-input").each(function () {
+          var index = $(this).data("box-id");
+          if (localStorage.getItem(index) == "true") {
+            $(this).prop("checked", true);
+          } else {
+            $(this).prop("checked", false);
+          }
+        });
+      });
+    </script>
+  </body>
 </html>
