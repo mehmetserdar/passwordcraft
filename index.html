@@ -42,10 +42,7 @@
         max-width: 70vw;
       }
 
-      body {
-        background-color: #030303;
-        background-image: linear-gradient(180deg, #030303 0%, #ffffff 100%);
-      }
+     
     </style>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script type="text/javascript">
@@ -125,11 +122,11 @@
     </script>
   </head>
 
-  <body>
+  <body class="bg-dark">
     <div class="container position-relative">
       <div class="row m-5">
-        <p class="h1 text-white text-center mb-2">Strong Password Generator</p>
-        <p class="h3 text-white text-center mb-5">with Random Quotes</p>
+        <p class="h1 text-white text-center mb-2 d-none d-lg-block">Strong Password Generator</p>
+        <p class="h3 text-white text-center mb-5 d-none d-lg-block">with Random Quotes</p>
         <form>
           <div class="input-group mb-3" id="upper">
             <div class="input-group-text">
@@ -141,7 +138,7 @@
               />
             </div>
             <input type="text" class="form-control" />
-            <span> <a class="btn btn-dark p-2" href="#">Reset</a></span>
+            <span> <a class="btn btn-primary p-2" href="#">Reset</a></span>
           </div>
           <div class="input-group mb-3" id="lower">
             <div class="input-group-text">
@@ -153,7 +150,7 @@
               />
             </div>
             <input type="text" class="form-control" />
-            <span> <a class="btn btn-dark p-2" href="#">Reset</a></span>
+            <span> <a class="btn btn-primary p-2" href="#">Reset</a></span>
           </div>
           <div class="input-group mb-3" id="number">
             <div class="input-group-text">
@@ -165,7 +162,7 @@
               />
             </div>
             <input type="text" class="form-control" />
-            <span> <a class="btn btn-dark p-2" href="#">Reset</a></span>
+            <span> <a class="btn btn-primary p-2" href="#">Reset</a></span>
           </div>
           <div class="input-group mb-3" id="special">
             <div class="input-group-text">
@@ -177,7 +174,7 @@
               />
             </div>
             <input type="text" class="form-control" />
-            <span> <a class="btn btn-dark p-2" href="#">Reset</a></span>
+            <span> <a class="btn btn-primary p-2" href="#">Reset</a></span>
           </div>
           <br />
           <div class="input-group flex-nowrap">
@@ -190,23 +187,12 @@
               value="16"
             /><br />
             <input
-              class="btn btn-dark p-2"
+              class="btn btn-success p-2"
               type="submit"
-              value="Generate"
+              value="&#128274; Generate"
               onclick="generatePassword(); quotes(); return false;"
             />
-          </div>
-
-          <figure class="text-center mt-5 bg-white rounded">
-            <blockquote class="blockquote" id="quote">
-              <p>
-                I am the stongest password!
-              </p>
-            </blockquote>
-            <figcaption class="blockquote-footer" id="author">
-              123456
-            </figcaption>
-          </figure>
+          </div>          
 
           <div class="input-group d-flex justify-content-center mt-5">
             <div class="input-group-text">
@@ -220,6 +206,17 @@
               ></i>
             </div>
           </div>
+
+		  <figure class="text-center mt-5 bg-white rounded p-1">
+            <blockquote class="blockquote" id="quote">
+              <p>
+                I am the stongest password!
+              </p>
+            </blockquote>
+            <figcaption class="blockquote-footer" id="author">
+              123456
+            </figcaption>
+          </figure>
         </form>
       </div>
     </div>
@@ -308,7 +305,7 @@
         });
       });
     </script>
-    <footer class="footer mt-auto py-3 bg-light">
+    <footer class="footer mt-auto py-3 bg-light d-none d-lg-block">
       <div class="container">
         <span class="d-flex justify-content-center w-100 text-dark text-center"
           ><small>
