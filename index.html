@@ -43,8 +43,8 @@
       }
 
       body {
-        background-color: #4cb5f2;
-        background-image: linear-gradient(180deg, #4cb5f2 0%, #ffffff 100%);
+        background-color: #030303;
+        background-image: linear-gradient(180deg, #030303 0%, #ffffff 100%);
       }
     </style>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
@@ -141,7 +141,7 @@
               />
             </div>
             <input type="text" class="form-control" />
-            <span> <a class="btn btn-primary p-2" href="#">Reset</a></span>
+            <span> <a class="btn btn-dark p-2" href="#">Reset</a></span>
           </div>
           <div class="input-group mb-3" id="lower">
             <div class="input-group-text">
@@ -153,7 +153,7 @@
               />
             </div>
             <input type="text" class="form-control" />
-            <span> <a class="btn btn-primary p-2" href="#">Reset</a></span>
+            <span> <a class="btn btn-dark p-2" href="#">Reset</a></span>
           </div>
           <div class="input-group mb-3" id="number">
             <div class="input-group-text">
@@ -165,7 +165,7 @@
               />
             </div>
             <input type="text" class="form-control" />
-            <span> <a class="btn btn-primary p-2" href="#">Reset</a></span>
+            <span> <a class="btn btn-dark p-2" href="#">Reset</a></span>
           </div>
           <div class="input-group mb-3" id="special">
             <div class="input-group-text">
@@ -177,7 +177,7 @@
               />
             </div>
             <input type="text" class="form-control" />
-            <span> <a class="btn btn-primary p-2" href="#">Reset</a></span>
+            <span> <a class="btn btn-dark p-2" href="#">Reset</a></span>
           </div>
           <br />
           <div class="input-group flex-nowrap">
@@ -186,11 +186,11 @@
               id="length"
               type="number"
               class="form-control"
-              placeholder="Length:"
+              placeholder="Length"
               value="16"
             /><br />
             <input
-              class="btn btn-primary p-2"
+              class="btn btn-dark p-2"
               type="submit"
               value="Generate"
               onclick="generatePassword(); quotes(); return false;"
@@ -200,12 +200,11 @@
           <figure class="text-center mt-5 bg-white rounded">
             <blockquote class="blockquote" id="quote">
               <p>
-                Treat your password like your toothbrush. Don't let anybody else
-                use it, and get a new one every six months.
+                I am the stongest password!
               </p>
             </blockquote>
             <figcaption class="blockquote-footer" id="author">
-              Clifford Stoll
+              123456
             </figcaption>
           </figure>
 
@@ -215,34 +214,13 @@
 
               <i
                 id="toastbtn"
-                class="fa fa-clipboard btn btn-primary"
+                class="fa fa-clipboard btn btn-dark"
                 aria-hidden="true"
                 onclick="selectAndCopy(); toastShow(); return false;"
               ></i>
             </div>
           </div>
         </form>
-      </div>
-    </div>
-    <!-- Toast -->
-    <div class="content">
-      <div class="row">
-        <div
-          aria-live="polite"
-          aria-atomic="true"
-          class="d-flex justify-content-center align-items-center w-100"
-        >
-          <div
-            class="toast align-items-center text-white bg-success border-0 fs-6"
-            role="alert"
-            aria-live="assertive"
-            aria-atomic="true"
-          >
-            <div class="d-flex">
-              <div class="toast-body text-center">PASSWORD IS COPIED!</div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -330,5 +308,26 @@
         });
       });
     </script>
+    <footer class="footer mt-auto py-3 bg-light">
+      <div class="container">
+        <span class="d-flex justify-content-center w-100 text-dark text-center"
+          ><small>
+            <b>Features:</b>
+            Passwords are generated client-sided (in your web browser). Random
+            passwords are securely generated. <br />
+            <b>Disclaimer:</b>
+            This tool does not guarantee the security of your password. How you
+            remember and save your password is entirely your responsibility.
+            <br />
+            <a
+              class="btn btn-dark btn-sm"
+              href="https://play.google.com/store/apps/dev?id=7123957245789156225"
+              target="_blank"
+              >Absurd Apps &copy; 2022
+            </a>
+          </small>
+        </span>
+      </div>
+    </footer>
   </body>
 </html>
