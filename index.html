@@ -9,10 +9,14 @@
 	<link rel="shortcut icon" href="favicon.png" type="image/x-icon">
 	<title>Strong Password Generator & Random Quotes</title>
 	<style type="text/css">
-		a, a:hover, a:visited, a:active{
+		a,
+		a:hover,
+		a:visited,
+		a:active {
 			text-decoration: none;
 
 		}
+
 		#toast-container>div {
 			opacity: 1 !important;
 		}
@@ -35,12 +39,50 @@
 
 		body {
 			background-color: #4cb5f2;
-            background-image: linear-gradient(180deg, #4cb5f2 0%, #ffffff 100%);
+			background-image: linear-gradient(180deg, #4cb5f2 0%, #ffffff 100%);
 
 
 		}
 	</style>
 	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+	<script src="cookie.js"></script>
+	<script>
+		function quotes() {
+			const text = document.getElementById("quote");
+			const author = document.getElementById("author");
+
+			const getNewQuote = async () => {
+				//api for quotes
+				var url = "https://type.fit/api/quotes";
+
+				// fetch the data from api
+				const response = await fetch(url);
+				console.log(typeof response);
+				//convert response to json and store it in quotes array
+				const allQuotes = await response.json();
+
+				// Generates a random number between 0 and the length of the quotes array
+				const indx = Math.floor(Math.random() * allQuotes.length);
+
+				//Store the quote present at the randomly generated index
+				const quote = allQuotes[indx].text;
+
+				//Store the author of the respective quote
+				const auth = allQuotes[indx].author;
+
+				if (auth == null) {
+					author = "Anonymous";
+				}
+
+				//function to dynamically display the quote and the author
+				text.innerHTML = quote;
+				author.innerHTML = auth;
+			}
+
+			getNewQuote();
+			
+		}
+	</script>
 	<script type="text/javascript">
 		var charTypes = {
 			'upper': 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
@@ -95,7 +137,7 @@
 			var password = _generatePassword(passwordLength, charBlocks);
 			var $display = document.getElementById('display-password');
 			$display.textContent = password;
-			selectAndCopy()
+			quotes();
 		}
 	</script>
 	<script>
@@ -112,7 +154,8 @@
 		}
 	</script>
 </head>
-
+	<!-- Toast -->
+	
 <body class="d-flex flex-column h-100 w-100">
 
 	<div class="container position-relative">
@@ -123,75 +166,76 @@
 			<form>
 				<div class="input-group mb-3" id="upper">
 					<div class="input-group-text">
-						<input class="form-check-input mt-0" type="checkbox" checked>
+						<input class="form-check-input mt-0" data-box-id="cb1" type="checkbox" >
 					</div>
 					<input type="text" class="form-control">
 					<span> <a class="btn btn-primary p-2" href="#">Reset</a></span>
 				</div>
 				<div class="input-group mb-3" id="lower">
 					<div class="input-group-text">
-						<input class="form-check-input mt-0" type="checkbox" checked>
+						<input class="form-check-input mt-0"  data-box-id="cb2" type="checkbox" >
 					</div>
 					<input type="text" class="form-control">
 					<span> <a class="btn btn-primary p-2" href="#">Reset</a></span>
 				</div>
 				<div class="input-group mb-3" id="number">
 					<div class="input-group-text">
-						<input class="form-check-input mt-0" type="checkbox" checked>
+						<input class="form-check-input mt-0"  data-box-id="cb3" type="checkbox" >
 					</div>
 					<input type="text" class="form-control">
 					<span> <a class="btn btn-primary p-2" href="#">Reset</a></span>
 				</div>
 				<div class="input-group mb-3" id="special">
 					<div class="input-group-text">
-						<input class="form-check-input mt-0" type="checkbox" checked>
+						<input class="form-check-input mt-0"  data-box-id="cb4" type="checkbox" >
 					</div>
 					<input type="text" class="form-control">
 					<span> <a class="btn btn-primary p-2" href="#">Reset</a></span>
 				</div>
+
+			
 				<br />
 				<div class="input-group flex-nowrap">
 					<span class="input-group-text" id="addon-wrapping">Length:</span>
 					<input id="length" type="number" class="form-control" placeholder="Length:" value="16"><br />
 					<input class="btn btn-primary p-2" type="submit" value="Generate"
-						onclick="generatePassword(); quotes(); return false;">
+						onclick="generatePassword()">
 				</div>
+				
 
 				<figure class="text-center mt-5 bg-white rounded">
 					<blockquote class="blockquote" id="quote">
-						<p>Treat your password like your toothbrush. Don't let anybody else use it, and get a new one
-							every six months.</p>
+						<p></p>
 					</blockquote>
 					<figcaption class="blockquote-footer" id="author">
-						Clifford Stoll
 					</figcaption>
 				</figure>
 
 				<div class="input-group d-flex justify-content-center mt-5">
 					<div class="input-group-text">
 						<span id="display-password" class="form-control-lg"></span>
-
-						<i id="toastbtn" class="fa fa-clipboard btn btn-primary" aria-hidden="true"
-							onclick="selectAndCopy(); toastShow(); return false;"></i>
-						
 							
+						<i id="toastbtn" class="fa fa-clipboard btn btn-primary" aria-hidden="true"
+							onclick="selectAndCopy()"></i>
+
+							
+
+
 					</div>
+					
 				</div>
 			</form>
-		</div>
-	</div>
-
-	
-	<!-- Toast -->
-	<div class="content">
-		<div class="row">
-			<div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center w-100">
-
-				<div class="toast align-items-center text-white bg-success border-0 fs-6" role="alert"
-					aria-live="assertive" aria-atomic="true">
-					<div class="d-flex justify-content-center">
-						<div class="toast-body">
-							COPIED!
+			<div class="content">
+				<div class="row">
+					<div class="d-flex justify-content-center align-items-center w-20">
+		
+						<div class="toast align-items-center text-white bg-success border-0 fs-6" role="alert"
+							>
+							<div class="d-flex justify-content-center">
+								<div class="toast-body">
+									COPIED!
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -199,8 +243,11 @@
 		</div>
 	</div>
 
+
+
+
 	<script type="text/javascript">
-		
+
 		$(buttonSelector).click(selectAndCopy)
 
 		function selectAndCopy() {
@@ -227,6 +274,7 @@
 				toastList.forEach(toast => toast.show()); // This show them
 			};
 		}
+		toastShow();
 	</script>
 	<script>
 		function quotes() {
@@ -262,22 +310,51 @@
 			}
 
 			getNewQuote();
+			
 		}
 	</script>
+	
+<script>
+$('.form-check-input').change(function(){
+    var chckd = this.checked ? 'true' : 'false';
+    var index = $(this).data('box-id');
+    localStorage.setItem(index, chckd);
+});
+
+</script>
+<script>
+$(function() {
+    $('.form-check-input').each(function(){
+        var index = $(this).data('box-id');
+        if (localStorage.getItem(index) == 'true') {
+            $(this).prop('checked', true);
+        } else {
+            $(this).prop('checked', false);
+        }
+    });    
+});
+
+
+</script>
+	
 	<footer class="footer mt-auto py-3 bg-light">
 		<div class="container">
-		  <span class="d-flex justify-content-center w-100 text-muted text-center"><small>
-			<b>Features:</b> 
-			Passwords are generated client-sided (in your web browser). They don't travel around www, so they are for you only!
-			Passwords are securely generated randomly. <br>
-			<b>Disclaimer:</b>
-			This tool does not guarantee the security of your password. How you remember and save your password is entirely your responsibility. <br>
-		2021 &copy;  <a href="https://github.com/mehmetserdar/strongpasswordquotes-main" target="_blank">mehmetserdar on github</a>
-		</small>
-		</span>
+			<span class="d-flex justify-content-center w-100 text-muted text-center"><small>
+					<b>Features:</b>
+					Passwords are generated client-sided (in your web browser). They don't travel around www, so they
+					are for you only!
+					Passwords are securely generated randomly. <br>
+					<b>Disclaimer:</b>
+					This tool does not guarantee the security of your password. How you remember and save your password
+					is entirely your responsibility. <br>
+					2021 &copy; <a href="https://github.com/mehmetserdar/strongpasswordquotes-main"
+						target="_blank">mehmetserdar on github</a>
+				</small>
+			</span>
 		</div>
-	  </footer>
-	  
-	
+	</footer>
+
+
 </body>
+
 </html>
