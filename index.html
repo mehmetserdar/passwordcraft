@@ -118,19 +118,36 @@
 
         // The strong and weak password Regex pattern checker
 
+        let impossiblePassword = new RegExp(
+          "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{24,})"
+        );
+
+        let veryStrongPassword = new RegExp(
+          "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{16,})"
+        );
+
         let strongPassword = new RegExp(
-          "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})"
+          "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{12,})"
         );
         let mediumPassword = new RegExp(
-          "((?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{6,}))|((?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9])(?=.{8,}))"
+          "((?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{6,}))|((?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9])(?=.{6,}))"
         );
 
         function StrengthChecker(PasswordParameter) {
           // We then change the badge's color and text based on the password strength
 
-          if (strongPassword.test(PasswordParameter)) {
+          if (impossiblePassword.test(PasswordParameter)) {
+            strengthBadge.style.backgroundColor = "purple";
+            strengthBadge.textContent = "Impossible";
+          }
+            else if (veryStrongPassword.test(PasswordParameter)) {
             strengthBadge.style.backgroundColor = "green";
+            strengthBadge.textContent = "Very Strong";
+          }
+            else if (strongPassword.test(PasswordParameter)) {
+            strengthBadge.style.backgroundColor = "lime";
             strengthBadge.textContent = "Strong";
+          
           } else if (mediumPassword.test(PasswordParameter)) {
             strengthBadge.style.backgroundColor = "orange";
             strengthBadge.textContent = "Medium";
