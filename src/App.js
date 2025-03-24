@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
@@ -19,7 +19,7 @@ function App() {
     special: true
   });
   
-  const generatePassword = () => {
+  const generatePassword = useCallback(() => {
     const charBlocks = [];
     Object.keys(settings).forEach(key => {
       if (settings[key]) {
@@ -33,7 +33,7 @@ function App() {
       newPassword += allChars.charAt(Math.floor(Math.random() * allChars.length));
     }
     setPassword(newPassword);
-  };
+  }, [length, settings]);
 
   const handleSettingChange = (setting) => {
     setSettings(prev => ({
@@ -44,7 +44,7 @@ function App() {
 
   useEffect(() => {
     generatePassword();
-  }, [length, settings]);
+    }, [generatePassword]);
 
   const [strengthBadge, setStrengthBadge] = useState({
     color: '#dc3545',
