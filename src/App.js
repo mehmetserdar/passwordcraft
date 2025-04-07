@@ -106,7 +106,7 @@ function App() {
               className="btn btn-primary"
               onClick={generatePassword}
             >
-              🔒 Generate
+              ↻ Generate
             </button>
           </div>
 
