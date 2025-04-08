@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
@@ -39,12 +39,11 @@ function App() {
     return savedLevel ? parseInt(savedLevel) : 1;
   });
   const [mode, setMode] = useState('friendly');
-  const [soundEnabled, setSoundEnabled] = useState(true);
   const [savedPasswords, setSavedPasswords] = useState([]);
   const [passwordCount, setPasswordCount] = useState(1);
   const [generatedPasswords, setGeneratedPasswords] = useState([]);
   
-  const separators = ['-', '_', '.', '!', '@', '#', '$', '%', '&', '*'];
+  const separators = useMemo(() => ['-', '_', '.', '!', '@', '#', '$', '%', '&', '*'], []);
 
   const [notification, setNotification] = useState({ show: false, message: '', type: '' });
 
@@ -107,8 +106,7 @@ function App() {
     
     setGeneratedPasswords(passwords);
     setPassword(passwords[0]); // Set first password as current
-    playSound('generate');
-  }, [length, settings, mode, passwordCount, mnemonicLength, bip39Words, playSound, separators]);
+  }, [length, settings, mode, passwordCount, mnemonicLength, bip39Words, separators]);
 
   const handleSettingChange = (setting) => {
     setSettings(prev => ({
@@ -144,11 +142,6 @@ function App() {
     }
   };
 
-  const playSound = (type) => {
-    if (!soundEnabled) return;
-    console.log(`Playing ${type} sound`);
-  };
-
   const arcadeStyle = {
     fontFamily: "'Press Start 2P', monospace",
     backgroundColor: brandColors.background,
@@ -174,7 +167,6 @@ function App() {
     setSavedPasswords(updatedPasswords);
     localStorage.setItem('savedPasswords', JSON.stringify(updatedPasswords));
     checkLevelUp(updatedPasswords.length);
-    playSound('save');
     showNotification(`${newPasswords.length} passwords successfully saved!`, 'success');
   };
 
@@ -183,7 +175,6 @@ function App() {
     if (newLevel > level) {
       setLevel(newLevel);
       localStorage.setItem('arcadeLevel', newLevel.toString());
-      playSound('levelup');
     }
   };
 
@@ -199,7 +190,6 @@ function App() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    playSound('download');
   };
 
   const clearAllPasswords = () => {
@@ -270,19 +260,6 @@ function App() {
         </p>
 
         <div className="col-md-8 mx-auto">
-          {/* Add sound toggle button before mode selection */}
-          <div className="d-flex justify-content-end mb-3">
-            <button
-              className={`btn btn-sm ${soundEnabled ? 'btn-success' : 'btn-secondary'}`}
-              onClick={() => setSoundEnabled(prev => !prev)}
-              style={{ fontFamily: "'Press Start 2P', monospace", fontSize: '0.6rem' }}
-            >
-              <i className={`fas fa-volume-${soundEnabled ? 'up' : 'mute'}`}></i>
-              {' '}
-              {soundEnabled ? 'Sound ON' : 'Sound OFF'}
-            </button>
-          </div>
-
           <div className="mb-4">
             <h5 style={{ color: brandColors.secondary, marginBottom: '1rem' }}>Select Your Mode</h5>
             <div className="row">
