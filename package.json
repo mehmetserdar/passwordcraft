@@ -1,8 +1,6 @@
 {
-  "name": "passwordcraft",
-  "version": "1.0.0",
-  "description": "A password manager that helps you generate and store strong passwords securely.",
-  "main": "index.js",
+  "name": "strong-password-quotes",
+  "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.0.0",
