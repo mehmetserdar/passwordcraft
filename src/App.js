@@ -169,6 +169,19 @@ function App() {
     }
   };
 
+  const getPasswordStrength = (pass) => {
+    if (new RegExp("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{24,})").test(pass)) {
+      return { color: '#6f42c1', text: 'Impossible' };
+    } else if (new RegExp("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{16,})").test(pass)) {
+      return { color: '#198754', text: 'Very Strong' };
+    } else if (new RegExp("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{12,})").test(pass)) {
+      return { color: '#0dcaf0', text: 'Strong' };
+    } else if (new RegExp("((?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{6,}))").test(pass)) {
+      return { color: '#ffc107', text: 'Medium' };
+    }
+    return { color: '#dc3545', text: 'Weak' };
+  };
+
   const arcadeStyle = {
     fontFamily: "'Press Start 2P', monospace",
     backgroundColor: brandColors.darkBackground,
@@ -452,14 +465,26 @@ function App() {
                 </h6>
                 {generatedPasswords.map((pass, index) => (
                   <div key={index} className="d-flex justify-content-between align-items-center mb-2 bg-black bg-opacity-50 p-2 rounded">
-                    <span style={{ 
-                      fontFamily: "'Press Start 2P', monospace",
-                      fontSize: '0.7rem', 
-                      color: '#fff',
-                      wordBreak: 'break-all'
-                    }}>
-                      {pass}
-                    </span>
+                    <div className="d-flex align-items-center flex-grow-1">
+                      <span style={{ 
+                        fontFamily: "'Press Start 2P', monospace",
+                        fontSize: '0.7rem', 
+                        color: '#fff',
+                        wordBreak: 'break-all'
+                      }}>
+                        {pass}
+                      </span>
+                      <span style={{
+                        marginLeft: '10px',
+                        fontSize: '0.6rem',
+                        padding: '2px 6px',
+                        borderRadius: '4px',
+                        backgroundColor: getPasswordStrength(pass).color,
+                        color: '#fff'
+                      }}>
+                        {getPasswordStrength(pass).text}
+                      </span>
+                    </div>
                     <button
                       className="btn btn-sm btn-outline-light ms-2"
                       onClick={() => {
@@ -474,53 +499,6 @@ function App() {
               </div>
             </div>
           )}
-
-          <div className="input-group input-group-lg mb-3 shadow-sm">
-            <input
-              type="text"
-              className="form-control"
-              value={password}
-              readOnly
-              style={{
-                fontFamily: "'Press Start 2P', monospace",
-                fontSize: '1rem',
-                letterSpacing: '2px',
-                borderColor: strengthBadge.color,
-                borderWidth: '2px',
-                transition: 'all 0.3s ease',
-                boxShadow: `0 0 0 0.1rem ${strengthBadge.color}25`
-              }}
-            />
-            <span 
-              className="input-group-text"
-              style={{ 
-                fontFamily: "'Press Start 2P', monospace",
-                fontSize: '0.8rem',
-                color: strengthBadge.color,
-                borderColor: strengthBadge.color,
-                borderWidth: '2px',
-                transition: 'all 0.3s ease'
-              }}
-            >
-              {strengthBadge.text}
-            </span>
-            <button
-              className="btn"
-              onClick={() => {
-                navigator.clipboard.writeText(password);
-                showNotification('Password copied to clipboard!', 'success');
-              }}
-              style={{
-                color: strengthBadge.color,
-                borderColor: strengthBadge.color,
-                borderWidth: '2px',
-                transition: 'all 0.3s ease',
-                marginLeft: '-1px'
-              }}
-            >
-              <i className="fa fa-clipboard"></i>
-            </button>
-          </div>
 
           <div className="row g-2 mb-4">
             <div className="col-6">
@@ -558,14 +536,26 @@ function App() {
               ) : (
                 savedPasswords.map((pass, index) => (
                   <div key={index} className="d-flex justify-content-between align-items-center mb-2 bg-black bg-opacity-50 p-2 rounded">
-                    <span style={{ 
-                      fontFamily: "'Press Start 2P', monospace",
-                      fontSize: '0.7rem',
-                      color: '#00ff00',
-                      wordBreak: 'break-all'
-                    }}>
-                      {pass}
-                    </span>
+                    <div className="d-flex align-items-center flex-grow-1">
+                      <span style={{ 
+                        fontFamily: "'Press Start 2P', monospace",
+                        fontSize: '0.7rem',
+                        color: '#00ff00',
+                        wordBreak: 'break-all'
+                      }}>
+                        {pass}
+                      </span>
+                      <span style={{
+                        marginLeft: '10px',
+                        fontSize: '0.6rem',
+                        padding: '2px 6px',
+                        borderRadius: '4px',
+                        backgroundColor: getPasswordStrength(pass).color,
+                        color: '#fff'
+                      }}>
+                        {getPasswordStrength(pass).text}
+                      </span>
+                    </div>
                     <button 
                       onClick={() => {
                         const newPasswords = savedPasswords.filter((_, i) => i !== index);
