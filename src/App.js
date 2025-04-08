@@ -375,7 +375,6 @@ function App() {
             </>
           )}
 
-<<<<<<< HEAD
           {/* Display generated passwords */}
           {generatedPasswords.length > 0 && (
             <div className="mb-3">
@@ -412,23 +411,6 @@ function App() {
               </div>
             </div>
           )}
-=======
-          <div className="input-group mb-3 shadow-sm">
-            <span className="input-group-text bg-white">Length:</span>
-            <input
-              type="number"
-              className="form-control"
-              value={length}
-              onChange={(e) => setLength(parseInt(e.target.value))}
-            />
-            <button 
-              className="btn btn-primary"
-              onClick={generatePassword}
-            >
-              ↻ Generate
-            </button>
-          </div>
->>>>>>> 67405511ff43347e14247cd8e585e9a69685da3d
 
           <div className="input-group input-group-lg mb-3 shadow-sm">
             <input
