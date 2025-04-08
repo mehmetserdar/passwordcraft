@@ -16,6 +16,14 @@ const words = [
   'watermelon', 'xylophone', 'yellow', 'zebra'
 ];
 
+const brandColors = {
+  primary: '#6366f1', // Indigo
+  secondary: '#8b5cf6', // Violet
+  accent: '#f43f5e', // Rose
+  background: '#1e1b4b', // Dark indigo
+  text: '#f8fafc', // Slate light
+};
+
 function App() {
   const [password, setPassword] = useState('');
   const [length, setLength] = useState(16);
@@ -33,7 +41,7 @@ function App() {
   const [mode, setMode] = useState('friendly');
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [savedPasswords, setSavedPasswords] = useState([]);
-  const [passwordCount, setPasswordCount] = useState();
+  const [passwordCount, setPasswordCount] = useState(1);
   const [generatedPasswords, setGeneratedPasswords] = useState([]);
   
   const separators = ['-', '_', '.', '!', '@', '#', '$', '%', '&', '*'];
@@ -143,12 +151,12 @@ function App() {
 
   const arcadeStyle = {
     fontFamily: "'Press Start 2P', monospace",
-    backgroundColor: '#1a1a1a',
-    backgroundImage: 'linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8))',
-    color: '#00ff00',
+    backgroundColor: brandColors.background,
+    backgroundImage: 'linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7))',
+    color: brandColors.text,
     padding: '20px',
-    borderRadius: '8px',
-    border: '4px solid #4b0082',
+    borderRadius: '12px',
+    border: `4px solid ${brandColors.secondary}`,
     animation: 'glow 2s infinite',
     letterSpacing: '1px',
     lineHeight: '1.5'
@@ -247,44 +255,54 @@ function App() {
       </style>
 
       <div className="container py-5">
-        <h1 className="text-center mb-5" 
+        <h1 className="text-center mb-4" 
             style={{
-              color: '#ff00ff', 
-              textShadow: '0 0 10px #ff00ff',
-              fontSize: '1.8rem',
+              color: brandColors.primary,
+              textShadow: `0 0 10px ${brandColors.accent}`,
+              fontSize: '2rem',
               letterSpacing: '2px'
             }}>
-          ARCADE PASSWORD GENERATOR - LEVEL {level}
+          PasswordCraft
         </h1>
+        
+        <p className="text-center mb-5" style={{ color: brandColors.text, opacity: 0.8 }}>
+          Craft your perfect password with our powerful arcade-style generator
+        </p>
 
         <div className="col-md-8 mx-auto">
-          <div className="row mb-4">
-            <div className="col-4">
-              <button 
-                className={`btn w-100 ${mode === 'friendly' ? 'btn-success' : 'btn-outline-success'}`}
-                onClick={() => setMode('friendly')}
-                style={{ fontFamily: "'Press Start 2P', monospace", fontSize: '0.8rem', padding: '15px' }}
-              >
-                FRIENDLY
-              </button>
-            </div>
-            <div className="col-4">
-              <button 
-                className={`btn w-100 ${mode === 'strong' ? 'btn-warning' : 'btn-outline-warning'}`}
-                onClick={() => setMode('strong')}
-                style={{ fontFamily: "'Press Start 2P', monospace", fontSize: '0.8rem', padding: '15px' }}
-              >
-                STRONG
-              </button>
-            </div>
-            <div className="col-4">
-              <button 
-                className={`btn w-100 ${mode === 'mnemonic' ? 'btn-info' : 'btn-outline-info'}`}
-                onClick={() => setMode('mnemonic')}
-                style={{ fontFamily: "'Press Start 2P', monospace", fontSize: '0.8rem', padding: '15px' }}
-              >
-                MNEMONIC
-              </button>
+          <div className="mb-4">
+            <h5 style={{ color: brandColors.secondary, marginBottom: '1rem' }}>Select Your Mode</h5>
+            <div className="row">
+              <div className="col-4">
+                <button 
+                  className={`btn w-100 ${mode === 'friendly' ? 'btn-primary' : 'btn-outline-primary'}`}
+                  onClick={() => setMode('friendly')}
+                  style={{ fontFamily: "'Press Start 2P', monospace", fontSize: '0.8rem' }}
+                >
+                  <div>FRIENDLY</div>
+                  <small style={{ fontSize: '0.6rem' }}>Easy to remember</small>
+                </button>
+              </div>
+              <div className="col-4">
+                <button 
+                  className={`btn w-100 ${mode === 'strong' ? 'btn-warning' : 'btn-outline-warning'}`}
+                  onClick={() => setMode('strong')}
+                  style={{ fontFamily: "'Press Start 2P', monospace", fontSize: '0.8rem' }}
+                >
+                  <div>STRONG</div>
+                  <small style={{ fontSize: '0.6rem' }}>Maximum security</small>
+                </button>
+              </div>
+              <div className="col-4">
+                <button 
+                  className={`btn w-100 ${mode === 'mnemonic' ? 'btn-info' : 'btn-outline-info'}`}
+                  onClick={() => setMode('mnemonic')}
+                  style={{ fontFamily: "'Press Start 2P', monospace", fontSize: '0.8rem' }}
+                >
+                  <div>MNEMONIC</div>
+                  <small style={{ fontSize: '0.6rem' }}>BIP39 compatible</small>
+                </button>
+              </div>
             </div>
           </div>
 
