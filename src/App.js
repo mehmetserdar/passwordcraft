@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import { gameSystem } from './modules/gameSystem';
+import { Achievements } from './components/Achievements';
 
 const charTypes = {
   upper: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
@@ -22,6 +24,8 @@ const brandColors = {
   accent: '#f43f5e', // Rose
   background: '#1e1b4b', // Dark indigo
   text: '#f8fafc', // Slate light
+  darkBackground: '#0f0f1a', // Daha koyu arka plan
+  cardBg: '#1a1a2e', // Kart arka planı
 };
 
 function App() {
@@ -39,7 +43,10 @@ function App() {
     return savedLevel ? parseInt(savedLevel) : 1;
   });
   const [mode, setMode] = useState('friendly');
-  const [savedPasswords, setSavedPasswords] = useState([]);
+  const [savedPasswords, setSavedPasswords] = useState(() => {
+    const saved = localStorage.getItem('savedPasswords');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [passwordCount, setPasswordCount] = useState(1);
   const [generatedPasswords, setGeneratedPasswords] = useState([]);
   
@@ -106,6 +113,17 @@ function App() {
     
     setGeneratedPasswords(passwords);
     setPassword(passwords[0]); // Set first password as current
+
+    // Şifre oluşturulduktan sonra game system'i güncelle
+    const result = gameSystem.updateStats({
+      strength: strengthBadge.text,
+      mode,
+      isSaved: false
+    });
+
+    if (result.levelUp) {
+      showNotification(`Level Up! You are now level ${result.currentLevel}`, 'success');
+    }
   }, [length, settings, mode, passwordCount, mnemonicLength, bip39Words, separators]);
 
   const handleSettingChange = (setting) => {
@@ -144,15 +162,16 @@ function App() {
 
   const arcadeStyle = {
     fontFamily: "'Press Start 2P', monospace",
-    backgroundColor: brandColors.background,
-    backgroundImage: 'linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7))',
+    backgroundColor: brandColors.darkBackground,
+    backgroundImage: 'linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3))',
     color: brandColors.text,
     padding: '20px',
     borderRadius: '12px',
-    border: `4px solid ${brandColors.secondary}`,
-    animation: 'glow 2s infinite',
+    border: `2px solid ${brandColors.secondary}`,
+    boxShadow: `0 0 20px rgba(139, 92, 246, 0.3)`, // Mor gölge
     letterSpacing: '1px',
-    lineHeight: '1.5'
+    lineHeight: '1.5',
+    minHeight: '100vh'
   };
 
   const savePassword = () => {
@@ -168,15 +187,37 @@ function App() {
     localStorage.setItem('savedPasswords', JSON.stringify(updatedPasswords));
     checkLevelUp(updatedPasswords.length);
     showNotification(`${newPasswords.length} passwords successfully saved!`, 'success');
+
+    // Şifre kaydedildiğinde game system'i güncelle
+    const result = gameSystem.updateStats({
+      strength: strengthBadge.text,
+      mode,
+      isSaved: true
+    });
+
+    if (result.newAchievements.length > 0) {
+      result.newAchievements.forEach(achievement => {
+        showNotification(`Achievement Unlocked: ${achievement.title}!`, 'success');
+      });
+    }
   };
 
-  const checkLevelUp = (count) => {
+  const [levelUpAnimation, setLevelUpAnimation] = useState(false);
+
+  const checkLevelUp = useCallback((count) => {
     const newLevel = Math.floor(count / 5) + 1;
     if (newLevel > level) {
       setLevel(newLevel);
       localStorage.setItem('arcadeLevel', newLevel.toString());
+      setLevelUpAnimation(true);
+      setTimeout(() => setLevelUpAnimation(false), 1500);
+      showNotification(`Level Up! You are now level ${newLevel}`, 'success');
     }
-  };
+  }, [level]);
+
+  useEffect(() => {
+    checkLevelUp(savedPasswords.length);
+  }, [savedPasswords.length, checkLevelUp]);
 
   const downloadPasswords = () => {
     if (savedPasswords.length === 0) return;
@@ -241,23 +282,56 @@ function App() {
               opacity: 1;
             }
           }
+          
+          @keyframes levelUp {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+          }
+
+          .level-badge {
+            background: linear-gradient(45deg, ${brandColors.primary}, ${brandColors.secondary});
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+            color: white;
+            display: inline-block;
+            margin-left: 1rem;
+            animation: ${levelUpAnimation ? 'levelUp 1.5s ease' : 'none'};
+          }
+
+          .bg-card {
+            background-color: ${brandColors.cardBg} !important;
+            border: 1px solid rgba(139, 92, 246, 0.2) !important;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+          }
         `}
       </style>
 
       <div className="container py-5">
-        <h1 className="text-center mb-4" 
-            style={{
-              color: brandColors.primary,
-              textShadow: `0 0 10px ${brandColors.accent}`,
-              fontSize: '2rem',
-              letterSpacing: '2px'
-            }}>
-          PasswordCraft
-        </h1>
-        
-        <p className="text-center mb-5" style={{ color: brandColors.text, opacity: 0.8 }}>
-          Craft your perfect password with our powerful arcade-style generator
-        </p>
+        <div className="text-center mb-5">
+          <h1 className="mb-3" 
+              style={{
+                color: brandColors.primary,
+                textShadow: `0 0 10px ${brandColors.accent}`,
+                fontSize: '2rem',
+                letterSpacing: '2px'
+              }}>
+            PasswordCraft
+          </h1>
+          
+          <div className="level-badge">
+            <span style={{ fontSize: '0.8rem' }}>LEVEL</span>
+            <span style={{ fontSize: '1.2rem', marginLeft: '0.5rem' }}>{level}</span>
+          </div>
+
+          <div style={{ fontSize: '0.8rem', color: brandColors.text, marginTop: '0.5rem' }}>
+            {level < 10 ? `${savedPasswords.length % 5} / 5 to next level` : 'Max Level!'}
+          </div>
+
+          <p className="mt-3" style={{ color: brandColors.text, opacity: 0.8 }}>
+            Craft your perfect password with our powerful arcade-style generator
+          </p>
+        </div>
 
         <div className="col-md-8 mx-auto">
           <div className="mb-4">
@@ -298,7 +372,7 @@ function App() {
 
           {mode === 'mnemonic' ? (
             <div className="input-group mb-3 shadow-sm">
-              <span className="input-group-text bg-white" style={{ fontFamily: "'Press Start 2P', monospace", fontSize: '0.8rem' }}>
+              <span className="input-group-text bg-card text-light">
                 Words:
               </span>
               <select
@@ -321,7 +395,7 @@ function App() {
             <>
               {Object.keys(charTypes).map(type => (
                 <div key={type} className="input-group mb-3 shadow-sm">
-                  <div className="input-group-text bg-white border-end-0">
+                  <div className="input-group-text bg-card text-light border-end-0">
                     <input
                       type="checkbox"
                       checked={settings[type]}
@@ -331,7 +405,7 @@ function App() {
                   </div>
                   <input
                     type="text"
-                    className="form-control border-start-0"
+                    className="form-control bg-card text-light border-start-0"
                     value={charTypes[type]}
                     readOnly
                   />
@@ -521,6 +595,10 @@ function App() {
                 Clear All
               </button>
             </div>
+          </div>
+
+          <div className="mt-4">
+            <Achievements />
           </div>
 
           <div className="position-fixed bottom-0 end-0 p-3">
