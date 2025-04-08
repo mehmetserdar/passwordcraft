@@ -113,7 +113,7 @@ class GameSystem {
   }
 
   updateStats(passwordData) {
-    const { strength, mode, isSaved, batchSize = 1 } = passwordData;
+    const { strength, mode, batchSize = 1 } = passwordData; // isSaved parametresini kaldır
     
     this.stats.totalPasswords++;
     
