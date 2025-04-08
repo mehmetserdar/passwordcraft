@@ -29,6 +29,11 @@ const brandColors = {
 };
 
 function App() {
+  const [strengthBadge, setStrengthBadge] = useState({
+    color: '#dc3545',
+    text: 'Weak'
+  });
+
   const [password, setPassword] = useState('');
   const [length, setLength] = useState(16);
   const [settings, setSettings] = useState({
@@ -38,10 +43,10 @@ function App() {
     special: true
   });
 
-  const [level, setLevel] = useState(() => {
-    const savedLevel = localStorage.getItem('arcadeLevel');
-    return savedLevel ? parseInt(savedLevel) : 1;
-  });
+  const [gameState, setGameState] = useState(() => ({
+    level: gameSystem.stats.highestLevel,
+    totalPasswords: gameSystem.stats.totalPasswords
+  }));
   const [mode, setMode] = useState('friendly');
   const [savedPasswords, setSavedPasswords] = useState(() => {
     const saved = localStorage.getItem('savedPasswords');
@@ -118,13 +123,22 @@ function App() {
     const result = gameSystem.updateStats({
       strength: strengthBadge.text,
       mode,
-      isSaved: false
+      isSaved: false,
+      batchSize: passwordCount  // Batch size'ı ekle
+    });
+
+    // UI state güncelleme
+    setGameState({
+      level: result.currentLevel,
+      totalPasswords: gameSystem.stats.totalPasswords
     });
 
     if (result.levelUp) {
+      setLevelUpAnimation(true);
+      setTimeout(() => setLevelUpAnimation(false), 1500);
       showNotification(`Level Up! You are now level ${result.currentLevel}`, 'success');
     }
-  }, [length, settings, mode, passwordCount, mnemonicLength, bip39Words, separators]);
+  }, [length, settings, mode, passwordCount, mnemonicLength, bip39Words, separators, strengthBadge.text]);
 
   const handleSettingChange = (setting) => {
     setSettings(prev => ({
@@ -136,11 +150,6 @@ function App() {
   useEffect(() => {
     generatePassword();
     }, [generatePassword]);
-
-  const [strengthBadge, setStrengthBadge] = useState({
-    color: '#dc3545',
-    text: 'Weak'
-  });
 
   useEffect(() => {
     checkStrength(password);
@@ -185,7 +194,6 @@ function App() {
     const updatedPasswords = [...savedPasswords, ...newPasswords];
     setSavedPasswords(updatedPasswords);
     localStorage.setItem('savedPasswords', JSON.stringify(updatedPasswords));
-    checkLevelUp(updatedPasswords.length);
     showNotification(`${newPasswords.length} passwords successfully saved!`, 'success');
 
     // Şifre kaydedildiğinde game system'i güncelle
@@ -204,21 +212,6 @@ function App() {
 
   const [levelUpAnimation, setLevelUpAnimation] = useState(false);
 
-  const checkLevelUp = useCallback((count) => {
-    const newLevel = Math.floor(count / 5) + 1;
-    if (newLevel > level) {
-      setLevel(newLevel);
-      localStorage.setItem('arcadeLevel', newLevel.toString());
-      setLevelUpAnimation(true);
-      setTimeout(() => setLevelUpAnimation(false), 1500);
-      showNotification(`Level Up! You are now level ${newLevel}`, 'success');
-    }
-  }, [level]);
-
-  useEffect(() => {
-    checkLevelUp(savedPasswords.length);
-  }, [savedPasswords.length, checkLevelUp]);
-
   const downloadPasswords = () => {
     if (savedPasswords.length === 0) return;
     const content = savedPasswords.join('\n\n');
@@ -236,8 +229,14 @@ function App() {
   const clearAllPasswords = () => {
     setSavedPasswords([]);
     localStorage.removeItem('savedPasswords');
-    setLevel(1);
-    localStorage.setItem('arcadeLevel', '1');
+    
+    // UI'daki level bilgisini gameSystem'den tekrar al
+    setGameState({
+      level: gameSystem.stats.highestLevel,
+      totalPasswords: gameSystem.stats.totalPasswords
+    });
+    
+    showNotification('Saved passwords cleared', 'success');
   };
 
   return (
@@ -321,11 +320,11 @@ function App() {
           
           <div className="level-badge">
             <span style={{ fontSize: '0.8rem' }}>LEVEL</span>
-            <span style={{ fontSize: '1.2rem', marginLeft: '0.5rem' }}>{level}</span>
+            <span style={{ fontSize: '1.2rem', marginLeft: '0.5rem' }}>{gameState.level}</span>
           </div>
 
           <div style={{ fontSize: '0.8rem', color: brandColors.text, marginTop: '0.5rem' }}>
-            {level < 10 ? `${savedPasswords.length % 5} / 5 to next level` : 'Max Level!'}
+            {gameState.level < 10 ? `${gameSystem.stats.totalPasswords} passwords generated` : 'Max Level!'}
           </div>
 
           <p className="mt-3" style={{ color: brandColors.text, opacity: 0.8 }}>

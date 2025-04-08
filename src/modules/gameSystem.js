@@ -26,12 +26,40 @@ const ACHIEVEMENTS = {
     icon: '🔐',
     requirement: 5
   },
-  COLLECTOR: {
-    id: 'collector',
-    title: 'Password Collector',
-    description: 'Save 50 passwords',
-    icon: '💾',
-    requirement: 50
+  SPEED_MASTER: {
+    id: 'speed_master',
+    title: 'Speed Hacker',
+    description: 'Generate 10 passwords in a single batch',
+    icon: '⚡',
+    requirement: 10
+  },
+  IMPOSSIBLE_MASTER: {
+    id: 'impossible_master',
+    title: 'Impossible Master',
+    description: 'Generate 5 impossible-strength passwords',
+    icon: '🔥',
+    requirement: 5
+  },
+  FRIENDLY_MASTER: {
+    id: 'friendly_master',
+    title: 'Memory Master',
+    description: 'Generate 20 friendly passwords',
+    icon: '🧠',
+    requirement: 20
+  },
+  ELITE_GENERATOR: {
+    id: 'elite_generator',
+    title: 'Elite Generator',
+    description: 'Reach level 5',
+    icon: '👑',
+    requirement: 5
+  },
+  PASSWORD_SAGE: {
+    id: 'password_sage',
+    title: 'Password Sage',
+    description: 'Generate passwords using all modes',
+    icon: '🎭',
+    specialUnlock: true
   }
 };
 
@@ -85,26 +113,43 @@ class GameSystem {
   }
 
   updateStats(passwordData) {
-    const { strength, mode, isSaved } = passwordData;
+    const { strength, mode, isSaved, batchSize = 1 } = passwordData;
     
     this.stats.totalPasswords++;
-    if (strength === 'Weak') this.stats.weakPasswords++;
-    if (strength === 'Strong' || strength === 'Very Strong') this.stats.strongPasswords++;
-    if (mode === 'mnemonic') this.stats.mnemonicPhrases++;
-    if (isSaved) this.stats.savedPasswords++;
+    
+    // Mode'a göre istatistikleri güncelle
+    if (mode === 'mnemonic') {
+      this.stats.mnemonicPhrases = (this.stats.mnemonicPhrases || 0) + 1;
+    }
+
+    // Güç seviyesine göre istatistikleri güncelle
+    if (strength === 'Strong' || strength === 'Very Strong') {
+      this.stats.strongPasswords = (this.stats.strongPasswords || 0) + 1;
+    }
+
+    // Batch size kontrolü
+    if (batchSize >= 10) {
+      this.stats.maxBatchSize = Math.max(this.stats.maxBatchSize || 0, batchSize);
+    }
+
+    // Mode kullanım takibi
+    if (!this.stats.usedModes) {
+      this.stats.usedModes = {};
+    }
+    this.stats.usedModes[mode] = true;
 
     const newLevel = this.calculateLevel(this.stats.totalPasswords);
     const levelUp = newLevel > this.stats.highestLevel;
     this.stats.highestLevel = Math.max(this.stats.highestLevel, newLevel);
 
-    this.checkAchievements();
+    const newAchievements = this.checkAchievements();
     this.saveStats();
 
     return {
       currentLevel: newLevel,
       levelUp,
       nextThreshold: this.getNextLevelThreshold(newLevel),
-      newAchievements: this.getNewAchievements()
+      newAchievements
     };
   }
 
@@ -112,16 +157,39 @@ class GameSystem {
     const { stats } = this;
     const newAchievements = [];
 
-    if (!stats.achievements.includes(ACHIEVEMENTS.BEGINNER.id) && stats.totalPasswords >= 1) {
+    // Base achievement
+    if (!stats.achievements.includes(ACHIEVEMENTS.BEGINNER.id)) {
       newAchievements.push(ACHIEVEMENTS.BEGINNER);
     }
 
-    if (!stats.achievements.includes(ACHIEVEMENTS.WEAK_MASTER.id) && stats.weakPasswords >= ACHIEVEMENTS.WEAK_MASTER.requirement) {
-      newAchievements.push(ACHIEVEMENTS.WEAK_MASTER);
+    // Mnemonic achievement
+    if (!stats.achievements.includes(ACHIEVEMENTS.MNEMONIC_MASTER.id) && 
+        (stats.mnemonicPhrases || 0) >= ACHIEVEMENTS.MNEMONIC_MASTER.requirement) {
+      newAchievements.push(ACHIEVEMENTS.MNEMONIC_MASTER);
     }
 
-    // ... diğer başarılar için kontroller
+    // Strong password achievement
+    if (!stats.achievements.includes(ACHIEVEMENTS.STRONG_MASTER.id) && 
+        (stats.strongPasswords || 0) >= ACHIEVEMENTS.STRONG_MASTER.requirement) {
+      newAchievements.push(ACHIEVEMENTS.STRONG_MASTER);
+    }
 
+    // Speed achievement
+    if (!stats.achievements.includes(ACHIEVEMENTS.SPEED_MASTER.id) && 
+        (stats.maxBatchSize || 0) >= ACHIEVEMENTS.SPEED_MASTER.requirement) {
+      newAchievements.push(ACHIEVEMENTS.SPEED_MASTER);
+    }
+
+    // Sage achievement - tüm modları kullanma
+    if (!stats.achievements.includes(ACHIEVEMENTS.PASSWORD_SAGE.id) && 
+        stats.usedModes && 
+        stats.usedModes.friendly && 
+        stats.usedModes.strong && 
+        stats.usedModes.mnemonic) {
+      newAchievements.push(ACHIEVEMENTS.PASSWORD_SAGE);
+    }
+
+    // Achievement'ları kaydet
     newAchievements.forEach(achievement => {
       if (!stats.achievements.includes(achievement.id)) {
         stats.achievements.push(achievement.id);
