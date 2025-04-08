@@ -108,7 +108,7 @@ function App() {
     setGeneratedPasswords(passwords);
     setPassword(passwords[0]); // Set first password as current
     playSound('generate');
-  }, [length, settings, mode, passwordCount, mnemonicLength, bip39Words]);
+  }, [length, settings, mode, passwordCount, mnemonicLength, bip39Words, playSound, separators]);
 
   const handleSettingChange = (setting) => {
     setSettings(prev => ({
@@ -270,6 +270,19 @@ function App() {
         </p>
 
         <div className="col-md-8 mx-auto">
+          {/* Add sound toggle button before mode selection */}
+          <div className="d-flex justify-content-end mb-3">
+            <button
+              className={`btn btn-sm ${soundEnabled ? 'btn-success' : 'btn-secondary'}`}
+              onClick={() => setSoundEnabled(prev => !prev)}
+              style={{ fontFamily: "'Press Start 2P', monospace", fontSize: '0.6rem' }}
+            >
+              <i className={`fas fa-volume-${soundEnabled ? 'up' : 'mute'}`}></i>
+              {' '}
+              {soundEnabled ? 'Sound ON' : 'Sound OFF'}
+            </button>
+          </div>
+
           <div className="mb-4">
             <h5 style={{ color: brandColors.secondary, marginBottom: '1rem' }}>Select Your Mode</h5>
             <div className="row">
